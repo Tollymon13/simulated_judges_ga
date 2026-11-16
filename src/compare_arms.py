@@ -9,6 +9,7 @@ INTERVENE label is not part of this report.
 """
 
 import json
+import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -23,11 +24,49 @@ def load_jsonl(path):
     return records
 
 
-def credence_from_turn(turn, key):
-    parsed = turn.get(key)
-    if not parsed:
+RAW_KEYS = {
+    "parsed": "raw",
+    "initial_parsed": "initial_raw",
+    "revision_parsed": "revision_raw",
+}
+CREDENCE_RE = {
+    "a": re.compile(r"(?:\*\*)?CREDENCE_DEBATER_A:(?:\*\*)?\s*\[?\s*(\d+)\s*\]?"),
+    "b": re.compile(r"(?:\*\*)?CREDENCE_DEBATER_B:(?:\*\*)?\s*\[?\s*(\d+)\s*\]?"),
+}
+
+
+def clamp_credence(value):
+    return max(1, min(99, int(value)))
+
+
+def credence_from_text(text):
+    """Read a credence in Debater A, clamping 0 and 100 into 1-99."""
+    if not text:
         return None
-    return parsed["credence_debater_a"]
+    normalized = (
+        text.replace("REVISED_MONOLOGUE", "INTERNAL_MONOLOGUE")
+        .replace("REVISED_CREDENCE_DEBATER_A", "CREDENCE_DEBATER_A")
+        .replace("REVISED_CREDENCE_DEBATER_B", "CREDENCE_DEBATER_B")
+    )
+    credence_a = CREDENCE_RE["a"].search(normalized)
+    credence_b = CREDENCE_RE["b"].search(normalized)
+    if not (credence_a and credence_b):
+        return None
+    credence_a = clamp_credence(credence_a.group(1))
+    credence_b = clamp_credence(credence_b.group(1))
+    if credence_a + credence_b != 100:
+        return None
+    return credence_a
+
+
+def credence_from_turn(turn, key):
+    parsed = turn.get(key) or {}
+    if "credence_debater_a" in parsed and "credence_debater_b" in parsed:
+        credence_a = clamp_credence(parsed["credence_debater_a"])
+        credence_b = clamp_credence(parsed["credence_debater_b"])
+        if credence_a + credence_b == 100:
+            return credence_a
+    return credence_from_text(turn.get(RAW_KEYS[key]))
 
 
 def mean(values):
@@ -40,8 +79,12 @@ def final_credence(record, arm):
     turns = [turn for turn in record.get("turns") or [] if turn.get("section") == 4]
     if not turns:
         return None
-    key = "parsed" if arm == "vanilla" else "revision_parsed"
-    return credence_from_turn(turns[0], key)
+    if arm == "vanilla":
+        return credence_from_turn(turns[0], "parsed")
+    credence = credence_from_turn(turns[0], "revision_parsed")
+    if credence is None:
+        credence = credence_from_turn(turns[0], "initial_parsed")
+    return credence
 
 
 def arm_summary(name, records, priors):
@@ -49,7 +92,7 @@ def arm_summary(name, records, priors):
     finals = []
     for draw in priors:
         record = by_index.get(draw["judge_index"])
-        if record is None or record.get("status") != "ok":
+        if record is None:
             continue
         credence = final_credence(record, name)
         if credence is None:
@@ -65,8 +108,6 @@ def arm_summary(name, records, priors):
 def revision_changes(records):
     by_section = {section: [] for section in SECTIONS}
     for record in records:
-        if record.get("status") != "ok":
-            continue
         for turn in record.get("turns") or []:
             section = turn.get("section")
             if section not in by_section:

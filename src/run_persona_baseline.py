@@ -84,10 +84,8 @@ def parse_reply(text):
     credence_b = FIELD_RE["credence_b"].search(text)
     if not (monologue and credence_a and credence_b):
         return None
-    credence_a = int(credence_a.group(1))
-    credence_b = int(credence_b.group(1))
-    if not (1 <= credence_a <= 99 and 1 <= credence_b <= 99):
-        return None
+    credence_a = max(1, min(99, int(credence_a.group(1))))
+    credence_b = max(1, min(99, int(credence_b.group(1))))
     if credence_a + credence_b != 100:
         return None
     return {
