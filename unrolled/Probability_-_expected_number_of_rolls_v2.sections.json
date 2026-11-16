@@ -1,0 +1,272 @@
+{
+  "source": "Probability_-_expected_number_of_rolls_v2.json",
+  "question": "Consider these two quantities:\n\nX: The expected number of rolls of a fair six-sided die until you roll two 6s in a row, given that all rolls were even.\n\nY: The expected number of rolls of a fair six-sided die until you roll the second 6 (not necessarily in a row), given that all rolls were even.\n\nTo understand exactly what is meant by \"the expected number of rolls... given that all rolls were even\" in this problem, think of it this way: Imagine you were to perform a billion sequences of die rolls, stopping each sequence when you roll two 6s in a row. Then you throw out all the sequences that contain an odd roll. The average number of rolls in the remaining sequences will be close to X. Next, perform a billion sequences of die rolls, stopping each sequence when you roll the second 6. Throw out all the sequences among these that contain an odd roll. The average number of rolls in the remaining sequences will be close to Y.\n\nWhich is larger, X or Y?",
+  "definitions": [
+    {
+      "id": "d6",
+      "text": "D6 - A six-sided die."
+    },
+    {
+      "id": "d3",
+      "text": "D3 - A three-sided die."
+    }
+  ],
+  "debater_a": "honest",
+  "debater_b": "dishonest",
+  "sections": [
+    {
+      "section": 1,
+      "turns": [
+        {
+          "speaker": "Debater A",
+          "claim_id": 1,
+          "text": "Y is larger.",
+          "reaction": {
+            "speaker": "Debater B",
+            "text": "objects"
+          }
+        },
+        {
+          "speaker": "Debater B",
+          "claim_id": 2,
+          "text": "X is larger.",
+          "reaction": {
+            "speaker": "Debater A",
+            "text": "objects"
+          }
+        }
+      ]
+    },
+    {
+      "section": 2,
+      "turns": [
+        {
+          "speaker": "Debater A",
+          "claim_id": 6,
+          "text": "X needs two 6s in a row, normally requiring a much longer run than Y's two 6s anywhere.",
+          "reaction": {
+            "speaker": "Debater B",
+            "text": "fully agrees"
+          }
+        },
+        {
+          "speaker": "Debater A",
+          "claim_id": 7,
+          "text": "But \"given all rolls were even\" filters long runs exponentially, so X's probability mass is squeezed onto its short, lucky runs much more so than Y's.",
+          "reaction": {
+            "speaker": "Debater B",
+            "text": "objects"
+          }
+        },
+        {
+          "speaker": "Debater B",
+          "claim_id": 3,
+          "text": "The condition \"all rolls were even\" effectively turns the D6 into a D3 for purposes of this question (sides 2, 4, 6).",
+          "reaction": {
+            "speaker": "Debater A",
+            "text": "objects"
+          }
+        },
+        {
+          "speaker": "Debater B",
+          "claim_id": 4,
+          "text": "On a D3, getting two 6s in a row is harder (requires more rolls) than getting two 6s not necessarily in a row.",
+          "reaction": {
+            "speaker": "Debater A",
+            "text": "fully agrees"
+          }
+        },
+        {
+          "speaker": "Debater A",
+          "claim_id": 15,
+          "text": "The expected number of rolls to first 6 for such a D3 is 3.",
+          "reaction": {
+            "speaker": "Debater B",
+            "text": "fully agrees"
+          }
+        },
+        {
+          "speaker": "Debater A",
+          "claim_id": 16,
+          "text": "The expected number of rolls to the first 6 for a D6, given that all rolls were even, is 3/2. So it's not true that the condition effectively turns the D6 to a D3.",
+          "reaction": {
+            "speaker": "Debater B",
+            "text": "objects"
+          }
+        },
+        {
+          "speaker": "Debater B",
+          "claim_id": 9,
+          "text": "\"Given all rolls were even\" applies to both X and Y.",
+          "reaction": {
+            "speaker": "Debater A",
+            "text": "fully agrees"
+          }
+        },
+        {
+          "speaker": "Debater B",
+          "claim_id": 10,
+          "text": "The stopping condition for X is strictly harder and happens later than or at the same time as Y's. X's distribution is dominated by long sequences that finally get two 6s in a row.",
+          "reaction": {
+            "speaker": "Debater A",
+            "text": "objects"
+          }
+        }
+      ]
+    },
+    {
+      "section": 3,
+      "turns": [
+        {
+          "speaker": "Debater A",
+          "claim_id": 21,
+          "text": "[9] is true, but affects X more because you'll nearly always roll an odd before getting two 6s, so the long sequences will be largely filtered out.",
+          "reaction": {
+            "speaker": "Debater B",
+            "text": "objects"
+          }
+        },
+        {
+          "speaker": "Debater A",
+          "claim_id": 22,
+          "text": "The first sentence of [10] is true, the second is a false statement that does not follow from it.",
+          "reaction": {
+            "speaker": "Debater B",
+            "text": "objects"
+          }
+        },
+        {
+          "speaker": "Debater B",
+          "claim_id": 18,
+          "text": "[3] specifies that the D6 becomes a D3 for the purposes of this question. The expected number of rolls to the first 6 given all rolls even is a separate, irrelevant question.",
+          "reaction": {
+            "speaker": "Debater A",
+            "text": "objects"
+          }
+        },
+        {
+          "speaker": "Debater B",
+          "claim_id": 19,
+          "text": "It is irrelevant because this question asks about cases involving two rolled 6s, not one.",
+          "reaction": {
+            "speaker": "Debater A",
+            "text": "objects"
+          }
+        },
+        {
+          "speaker": "Debater A",
+          "claim_id": 24,
+          "text": "It is relevant for showing why arguments based on this claimed equivalence don't work.",
+          "reaction": {
+            "speaker": "Debater B",
+            "text": "objects"
+          }
+        },
+        {
+          "speaker": "Debater A",
+          "claim_id": 25,
+          "text": "It would be strange if a (2, 4, 6) D3 was equivalent to \"D6 given all rolls even\" for this question, but not when calculating expected number of rolls to the first 6.",
+          "reaction": {
+            "speaker": "Debater B",
+            "text": "objects"
+          }
+        },
+        {
+          "speaker": "Debater B",
+          "claim_id": 27,
+          "text": "Y is affected similarly, because you will also nearly always roll an odd before getting two nonconsecutive 6s, so Y's runs are filtered just as harshly.",
+          "reaction": {
+            "speaker": "Debater A",
+            "text": "objects"
+          }
+        },
+        {
+          "speaker": "Debater B",
+          "claim_id": 28,
+          "text": "The net effect of the all-even condition is therefore similar for X and Y, and the D3 equivalence holds.",
+          "reaction": {
+            "speaker": "Debater A",
+            "text": "objects"
+          }
+        }
+      ]
+    },
+    {
+      "section": 4,
+      "turns": [
+        {
+          "speaker": "Debater A",
+          "claim_id": 33,
+          "text": "Among the all-even stopped sequences, 61% of X sequences stop at roll 2, compared with 44% of Y sequences. By the end of roll 3, 81% of X sequences have stopped, compared with 74% of Y sequences.",
+          "reaction": {
+            "speaker": "Debater B",
+            "text": "fully agrees"
+          }
+        },
+        {
+          "speaker": "Debater A",
+          "claim_id": 34,
+          "text": "This suggests that X is more likely than Y to stop extremely early.",
+          "reaction": {
+            "speaker": "Debater B",
+            "text": "objects"
+          }
+        },
+        {
+          "speaker": "Debater B",
+          "claim_id": 30,
+          "text": "\"Expected number of rolls to the first 6\" is a fundamentally different quantity than the question asks for.",
+          "reaction": {
+            "speaker": "Debater A",
+            "text": "fully agrees"
+          }
+        },
+        {
+          "speaker": "Debater B",
+          "claim_id": 31,
+          "text": "With one 6 needed, each roll's odds matter on their own. With two 6s, what counts is how often 6 turns up versus non-6 — non-6 is twice as likely here.",
+          "reaction": {
+            "speaker": "Debater A",
+            "text": "objects"
+          }
+        },
+        {
+          "speaker": "Debater A",
+          "claim_id": 39,
+          "text": "X depends on adjacent 6s, while Y depends on where the second 6 occurs; e.g. '626' stops Y at roll 3 but doesn't stop X.",
+          "reaction": {
+            "speaker": "Debater B",
+            "text": "fully agrees"
+          }
+        },
+        {
+          "speaker": "Debater A",
+          "claim_id": 40,
+          "text": "So order, not only relative frequency, is part of the stopping rule and affects the conditional expectation.",
+          "reaction": {
+            "speaker": "Debater B",
+            "text": "objects"
+          }
+        },
+        {
+          "speaker": "Debater B",
+          "claim_id": 36,
+          "text": "The total proportion of all-even stopped sequences that stop by roll 2 or 3 does not determine the overall weighting.",
+          "reaction": {
+            "speaker": "Debater A",
+            "text": "fully agrees"
+          }
+        },
+        {
+          "speaker": "Debater B",
+          "claim_id": 37,
+          "text": "The tails of the two distributions matter as well, and the full computation yields X as the larger of the two values.",
+          "reaction": {
+            "speaker": "Debater A",
+            "text": "objects"
+          }
+        }
+      ]
+    }
+  ]
+}
