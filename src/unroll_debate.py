@@ -24,10 +24,10 @@ REACTION_TEXT = {
     "Yes but omits key info": "agrees but thinks this omits key info",
 }
 
-HERE = os.path.dirname(os.path.abspath(__file__))
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DEFAULT_INPUTS = [
-    os.path.join(HERE, "Probability_-_expected_number_of_rolls.json"),
-    os.path.join(HERE, "Probability_-_expected_number_of_rolls_v2.json"),
+    os.path.join(ROOT, "data", "debates", "Probability_-_expected_number_of_rolls.json"),
+    os.path.join(ROOT, "data", "debates", "Probability_-_expected_number_of_rolls_v2.json"),
 ]
 
 
@@ -224,7 +224,7 @@ def parse_args(argv):
     )
     parser.add_argument(
         "--out-dir",
-        default=os.path.join(HERE, "unrolled"),
+        default=os.path.join(ROOT, "data", "unrolled"),
         help="Directory for the section files.",
     )
     parser.add_argument(

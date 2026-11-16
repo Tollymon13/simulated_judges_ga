@@ -10,7 +10,7 @@ import json
 import statistics
 from pathlib import Path
 
-HERE = Path(__file__).resolve().parent
+ROOT = Path(__file__).resolve().parent.parent
 
 
 def load_jsonl(path):
@@ -66,14 +66,14 @@ def closer(new, old, target):
 
 def one_debate(debate):
     priors = json.loads(
-        (HERE / "results" / "persona_varied" / debate / "human_priors.json").read_text(
+        (ROOT / "results" / "persona_varied" / debate / "human_priors.json").read_text(
             encoding="utf-8"
         )
     )["draws"]
     humans = [draw["human_section_4"] for draw in priors]
-    varied = section_4(load_jsonl(HERE / "results" / "persona_varied" / debate / "judges.jsonl"), "parsed")
+    varied = section_4(load_jsonl(ROOT / "results" / "persona_varied" / debate / "judges.jsonl"), "parsed")
     saved = section_4(
-        load_jsonl(HERE / "results" / "persona_baseline" / debate / "judges.jsonl"), "parsed"
+        load_jsonl(ROOT / "results" / "persona_baseline" / debate / "judges.jsonl"), "parsed"
     )
     human_side = side("humans", humans)
     varied_side = side("varied", varied)
@@ -106,7 +106,7 @@ def one_debate(debate):
 
 def main():
     report = {"v1": one_debate("v1"), "v2": one_debate("v2")}
-    out_path = HERE / "results" / "persona_varied" / "comparison.json"
+    out_path = ROOT / "results" / "persona_varied" / "comparison.json"
     out_path.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
     for debate, item in report.items():
         print(

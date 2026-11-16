@@ -59,5 +59,5 @@ echo "sglang ready $(date -Is)"
 
 PY=/project/home/p201613/ai-debate/debate-env/bin/python
 echo "START note uptake $(date -Is)"
-"$PY" -u score_note_uptake.py --concurrency 8
+"$PY" -u src/score_note_uptake.py --concurrency 8
 echo "END note uptake $(date -Is)"

@@ -13,8 +13,8 @@ from xml.etree import ElementTree as ET
 
 import numpy as np
 
-HERE = Path(__file__).resolve().parent
-WORKBOOK = HERE / "quant-1-official-study-noids.xlsx"
+ROOT = Path(__file__).resolve().parent.parent
+WORKBOOK = ROOT / "data" / "quant-1-official-study-noids.xlsx"
 NS = "{http://schemas.openxmlformats.org/spreadsheetml/2006/main}"
 EXPERIMENTS = (
     {
@@ -139,7 +139,7 @@ def main():
         humans = rows_for(records, header, experiment["debate_name"])
         if not humans:
             raise SystemExit("no rows for %s" % experiment["debate_name"])
-        out_dir = HERE / "results" / "persona_baseline" / experiment["debate"]
+        out_dir = ROOT / "results" / "persona_baseline" / experiment["debate"]
         out_dir.mkdir(parents=True, exist_ok=True)
         priors = sample_experiment(humans, experiment)
         summary = summarize(experiment, humans)

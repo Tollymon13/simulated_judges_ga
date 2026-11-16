@@ -19,8 +19,8 @@ from openai import AsyncOpenAI
 
 import run_persona_baseline as base
 
-HERE = Path(__file__).resolve().parent
-GUARDIAN_PATH = HERE / "guardian_angel.yaml"
+ROOT = Path(__file__).resolve().parent.parent
+GUARDIAN_PATH = ROOT / "prompts" / "guardian_angel.yaml"
 GUARDIAN_TEMPERATURE = 0.2
 PERSONA_TEMPERATURE = 0.6
 REVISION_INSTRUCTION = """A reviewer read your latest reasoning and wrote the note below. The reviewer is not telling you which debater is correct. Read the note and revise your monologue and credences.
@@ -273,7 +273,7 @@ async def guarded(semaphore, write_lock, out_file, *args):
 
 
 def debate_root(debate):
-    return HERE / "results" / "persona_baseline" / debate
+    return ROOT / "results" / "persona_baseline" / debate
 
 
 def blind_user(transcript, reasoning, credence):
@@ -496,7 +496,7 @@ def parse_args(argv):
     parser.add_argument("--max-tokens", type=int, default=512)
     parser.add_argument("--base-url", default="http://127.0.0.1:8000/v1")
     parser.add_argument("--model", default="")
-    parser.add_argument("--prompt", type=Path, default=HERE / "prompt_user.md")
+    parser.add_argument("--prompt", type=Path, default=ROOT / "prompts" / "prompt_user.md")
     parser.add_argument("--guardian", type=Path, default=GUARDIAN_PATH)
     return parser.parse_args(argv)
 

@@ -62,7 +62,7 @@ CONCURRENCY="${CONCURRENCY:-4}"
 PY=/project/home/p201613/ai-debate/debate-env/bin/python
 
 echo "START arms n=${N} concurrency=${CONCURRENCY} $(date -Is)"
-"$PY" -u run_persona_arms.py --arm both --n "$N" --concurrency "$CONCURRENCY"
+"$PY" -u src/run_persona_arms.py --arm both --n "$N" --concurrency "$CONCURRENCY"
 echo "START arm comparison $(date -Is)"
-"$PY" -u compare_arms.py
+"$PY" -u src/compare_arms.py
 echo "END arms $(date -Is)"

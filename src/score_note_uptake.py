@@ -18,7 +18,7 @@ from openai import AsyncOpenAI
 
 import run_persona_baseline as base
 
-HERE = Path(__file__).resolve().parent
+ROOT = Path(__file__).resolve().parent.parent
 REFLECTION_NOTE = (
     "Please reflect on your reasoning and the opponent's strongest point."
 )
@@ -76,7 +76,7 @@ def note_for(turn, kind):
 
 
 def items_for(debate, arm, dirname, kind):
-    path = HERE / "results" / "persona_baseline" / debate / dirname / "judges.jsonl"
+    path = ROOT / "results" / "persona_baseline" / debate / dirname / "judges.jsonl"
     found = []
     for record in load_jsonl(path):
         if record.get("status") != "ok":
@@ -157,7 +157,7 @@ async def run(args):
                 "mean_credence_change": (sum(changes) / len(changes)) if changes else None,
             }
         )
-    out_dir = HERE / "results" / "note_uptake"
+    out_dir = ROOT / "results" / "note_uptake"
     out_dir.mkdir(parents=True, exist_ok=True)
     (out_dir / "scores.jsonl").write_text(
         "".join(json.dumps(row, ensure_ascii=False) + "\n" for row in rows),

@@ -63,31 +63,31 @@ PY=/project/home/p201613/ai-debate/debate-env/bin/python
 fail=0
 
 echo "START update tendencies $(date -Is)"
-"$PY" -u sample_update_tendencies.py || fail=1
+"$PY" -u src/sample_update_tendencies.py || fail=1
 
 for debate in v1 v2; do
     echo "START varied vanilla debate=${debate} $(date -Is)"
-    "$PY" -u run_persona_baseline.py \
+    "$PY" -u src/run_persona_baseline.py \
         --debate "$debate" \
         --n "$N" \
         --concurrency "$CONCURRENCY" \
-        --prompt prompt_user_varied.md \
+        --prompt prompts/prompt_user_varied.md \
         --priors "results/persona_varied/${debate}/human_priors.json" \
         --out-dir "results/persona_varied/${debate}" || fail=1
 done
 
 echo "START v1 arms $(date -Is)"
-"$PY" -u run_persona_arms.py --debate v1 --arm both --n "$N" --concurrency "$CONCURRENCY" || fail=1
+"$PY" -u src/run_persona_arms.py --debate v1 --arm both --n "$N" --concurrency "$CONCURRENCY" || fail=1
 echo "START v1 comparison $(date -Is)"
-"$PY" -u compare_arms.py --debate v1 || fail=1
+"$PY" -u src/compare_arms.py --debate v1 || fail=1
 
 echo "START blind v2 guardian $(date -Is)"
-"$PY" -u run_persona_arms.py --debate v2 --arm blind --n "$N" --concurrency "$CONCURRENCY" || fail=1
+"$PY" -u src/run_persona_arms.py --debate v2 --arm blind --n "$N" --concurrency "$CONCURRENCY" || fail=1
 echo "START blind comparison $(date -Is)"
-"$PY" -u compare_arms.py --debate v2 --blind || fail=1
+"$PY" -u src/compare_arms.py --debate v2 --blind || fail=1
 
 echo "START varied comparison $(date -Is)"
-"$PY" -u compare_varied.py || fail=1
+"$PY" -u src/compare_varied.py || fail=1
 
 echo "END followup fail=${fail} $(date -Is)"
 exit "$fail"

@@ -11,7 +11,7 @@ from pathlib import Path
 
 import numpy as np
 
-HERE = Path(__file__).resolve().parent
+ROOT = Path(__file__).resolve().parent.parent
 SEEDS = {"v1": 32, "v2": 31}
 SENTENCES = {
     "barely": (
@@ -53,11 +53,11 @@ def assign(draws, seed):
 
 def main():
     for debate, seed in SEEDS.items():
-        source = HERE / "results" / "persona_baseline" / debate / "human_priors.json"
+        source = ROOT / "results" / "persona_baseline" / debate / "human_priors.json"
         payload = json.loads(source.read_text(encoding="utf-8"))
         payload["draws"] = assign(payload["draws"], seed)
         payload["update_seed"] = seed
-        out_dir = HERE / "results" / "persona_varied" / debate
+        out_dir = ROOT / "results" / "persona_varied" / debate
         out_dir.mkdir(parents=True, exist_ok=True)
         out_path = out_dir / "human_priors.json"
         out_path.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")

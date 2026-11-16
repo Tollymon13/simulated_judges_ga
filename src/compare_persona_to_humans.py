@@ -11,7 +11,7 @@ import json
 import sys
 from pathlib import Path
 
-HERE = Path(__file__).resolve().parent
+ROOT = Path(__file__).resolve().parent.parent
 TOLERANCE = 5.0
 
 
@@ -64,7 +64,7 @@ def paired_means(draws, judges, section_number, human_key):
 
 
 def compare(debate):
-    directory = HERE / "results" / "persona_baseline" / debate
+    directory = ROOT / "results" / "persona_baseline" / debate
     priors = json.loads((directory / "human_priors.json").read_text(encoding="utf-8"))
     judges = load_jsonl(directory / "judges.jsonl")
     section_1 = paired_means(priors["draws"], judges, 1, "human_section_1")
@@ -90,7 +90,7 @@ def main(argv):
     parser.add_argument("--debate", choices=("v1", "v2"), required=True)
     args = parser.parse_args(argv)
     report = compare(args.debate)
-    out_path = HERE / "results" / "persona_baseline" / args.debate / "comparison.json"
+    out_path = ROOT / "results" / "persona_baseline" / args.debate / "comparison.json"
     out_path.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
     section_4 = report["section_4"]
     print(

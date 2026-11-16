@@ -11,8 +11,7 @@ INTERVENE label is not part of this report.
 import json
 from pathlib import Path
 
-HERE = Path(__file__).resolve().parent
-ROOT = HERE / "results" / "persona_baseline" / "v2"
+ROOT = Path(__file__).resolve().parent.parent
 SECTIONS = (1, 2, 3, 4)
 
 
@@ -143,7 +142,7 @@ def main(argv=None):
     parser.add_argument("--debate", choices=("v1", "v2"), default="v2")
     parser.add_argument("--blind", action="store_true")
     args = parser.parse_args(argv)
-    root = HERE / "results" / "persona_baseline" / args.debate
+    root = ROOT / "results" / "persona_baseline" / args.debate
     priors = json.loads((root / "human_priors.json").read_text(encoding="utf-8"))["draws"]
     if args.blind:
         report = build_blind_report(

@@ -17,10 +17,10 @@ from pathlib import Path
 
 from openai import AsyncOpenAI
 
-HERE = Path(__file__).resolve().parent
+ROOT = Path(__file__).resolve().parent.parent
 DEBATE_FILES = {
-    "v1": HERE / "unrolled" / "Probability_-_expected_number_of_rolls.sections.md",
-    "v2": HERE / "unrolled" / "Probability_-_expected_number_of_rolls_v2.sections.md",
+    "v1": ROOT / "data" / "unrolled" / "Probability_-_expected_number_of_rolls.sections.md",
+    "v2": ROOT / "data" / "unrolled" / "Probability_-_expected_number_of_rolls_v2.sections.md",
 }
 SECTION_HEADING = re.compile(r"^## Section (\d+)\s*$", re.MULTILINE)
 FIELD_RE = {
@@ -234,7 +234,7 @@ async def resolve_model(client, requested):
 async def run(args):
     template = load_system_prompt(args.prompt)
     sections = load_sections(DEBATE_FILES[args.debate])
-    out_dir = args.out_dir or (HERE / "results" / "persona_baseline" / args.debate)
+    out_dir = args.out_dir or (ROOT / "results" / "persona_baseline" / args.debate)
     out_dir.mkdir(parents=True, exist_ok=True)
     priors_path = args.priors or (out_dir / "human_priors.json")
     draws = load_draws(priors_path, args.n)
@@ -301,7 +301,7 @@ def parse_args(argv):
     parser.add_argument("--max-tokens", type=int, default=512)
     parser.add_argument("--base-url", default="http://127.0.0.1:8000/v1")
     parser.add_argument("--model", default="", help="Defaults to the id reported by the server.")
-    parser.add_argument("--prompt", type=Path, default=HERE / "prompt_user.md")
+    parser.add_argument("--prompt", type=Path, default=ROOT / "prompts" / "prompt_user.md")
     parser.add_argument("--priors", type=Path, default=None)
     parser.add_argument("--out-dir", type=Path, default=None)
     return parser.parse_args(argv)

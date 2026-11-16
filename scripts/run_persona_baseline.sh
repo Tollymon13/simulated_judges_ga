@@ -65,7 +65,7 @@ CONCURRENCY="${CONCURRENCY:-4}"
 PY=/project/home/p201613/ai-debate/debate-env/bin/python
 
 echo "START sample priors $(date -Is)"
-"$PY" -u sample_human_priors.py
+"$PY" -u src/sample_human_priors.py
 
 if [[ "$DEBATE" == "both" ]]; then
     DEBATES=(v1 v2)
@@ -75,11 +75,11 @@ fi
 
 for debate in "${DEBATES[@]}"; do
     echo "START persona baseline debate=${debate} n=${N} concurrency=${CONCURRENCY} $(date -Is)"
-    "$PY" -u run_persona_baseline.py \
+    "$PY" -u src/run_persona_baseline.py \
         --debate "$debate" \
         --n "$N" \
         --concurrency "$CONCURRENCY"
     echo "START comparison debate=${debate} $(date -Is)"
-    "$PY" -u compare_persona_to_humans.py --debate "$debate"
+    "$PY" -u src/compare_persona_to_humans.py --debate "$debate"
 done
 echo "END persona baseline $(date -Is)"
