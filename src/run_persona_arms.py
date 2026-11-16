@@ -321,7 +321,12 @@ async def run_arm(args, arm):
 
 
 async def run_blind(args):
-    """Revise the saved v2 initials with a guardian that does not see the persona."""
+    """Blind guardian on v2. The guardian does not see the persona.
+
+    Section 1 starts from the saved initial, which was written before any note.
+    Each later section writes a new initial from the blind notes and revisions
+    already in the chat, then revises after the new blind note.
+    """
     if args.debate != "v2":
         raise SystemExit("the blind arm replays the saved v2 guardian judges")
     template = base.load_system_prompt(args.prompt)
@@ -350,16 +355,47 @@ async def run_blind(args):
         failed_section = None
         error = None
         for section_number, section_text in enumerate(sections, start=1):
-            saved_turn = next(
-                turn for turn in saved["turns"] if turn.get("section") == section_number
-            )
-            note = ((saved_turn.get("guardian") or {}).get("parsed") or {}).get("risk_summary")
-            initial = saved_turn.get("initial_parsed")
-            if not note or not initial:
-                status = "failed"
-                failed_section = section_number
-                error = "saved guardian turn has no initial or risk summary"
-                break
+            initial_attempts = None
+            if section_number == 1:
+                saved_turn = next(
+                    turn for turn in saved["turns"] if turn.get("section") == 1
+                )
+                initial_raw = saved_turn.get("initial_raw")
+                initial = saved_turn.get("initial_parsed")
+                if not initial_raw or not initial:
+                    status = "failed"
+                    failed_section = section_number
+                    error = "saved section 1 initial is missing"
+                    break
+            else:
+                try:
+                    initial_raw, initial, initial_attempts = await one_completion(
+                        client,
+                        model,
+                        list(prefix) + [{"role": "user", "content": section_text}],
+                        PERSONA_TEMPERATURE,
+                        args.max_tokens,
+                        1100 + draw["judge_index"],
+                        base.parse_reply,
+                    )
+                except Exception as exc:
+                    status = "failed"
+                    failed_section = section_number
+                    error = str(exc)
+                    break
+                if initial is None:
+                    status = "failed"
+                    failed_section = section_number
+                    error = "initial reply did not match the required format"
+                    turns.append(
+                        {
+                            "section": section_number,
+                            "initial_raw": initial_raw,
+                            "initial_parsed": None,
+                            "initial_attempts": initial_attempts,
+                        }
+                    )
+                    break
             transcript = "\n\n".join(sections[:section_number])
             guardian_messages = [
                 {"role": "system", "content": system_text},
@@ -397,23 +433,20 @@ async def run_blind(args):
                 turns.append(
                     {
                         "section": section_number,
-                        "initial_raw": saved_turn["initial_raw"],
+                        "initial_raw": initial_raw,
                         "initial_parsed": initial,
+                        "initial_attempts": initial_attempts,
                         "guardian": guardian,
                     }
                 )
                 break
+            revision_request = REVISION_INSTRUCTION.replace(
+                "{risk_summary}", guardian_parsed["risk_summary"]
+            )
             messages = list(prefix)
             messages.append({"role": "user", "content": section_text})
-            messages.append({"role": "assistant", "content": saved_turn["initial_raw"]})
-            messages.append(
-                {
-                    "role": "user",
-                    "content": REVISION_INSTRUCTION.replace(
-                        "{risk_summary}", guardian_parsed["risk_summary"]
-                    ),
-                }
-            )
+            messages.append({"role": "assistant", "content": initial_raw})
+            messages.append({"role": "user", "content": revision_request})
             try:
                 revised_raw, revised_parsed, revised_attempts = await one_completion(
                     client,
@@ -432,8 +465,9 @@ async def run_blind(args):
             turns.append(
                 {
                     "section": section_number,
-                    "initial_raw": saved_turn["initial_raw"],
+                    "initial_raw": initial_raw,
                     "initial_parsed": initial,
+                    "initial_attempts": initial_attempts,
                     "revision_raw": revised_raw,
                     "revision_parsed": revised_parsed,
                     "revision_attempts": revised_attempts,
@@ -448,12 +482,9 @@ async def run_blind(args):
             prefix.extend(
                 [
                     {"role": "user", "content": section_text},
-                    {"role": "assistant", "content": saved_turn["initial_raw"]},
-                    {
-                        "role": "user",
-                        "content": REVISION_INSTRUCTION.replace("{risk_summary}", note),
-                    },
-                    {"role": "assistant", "content": saved_turn["revision_raw"]},
+                    {"role": "assistant", "content": initial_raw},
+                    {"role": "user", "content": revision_request},
+                    {"role": "assistant", "content": revised_raw},
                 ]
             )
         return {
