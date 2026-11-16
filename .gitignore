@@ -4,3 +4,4 @@ __pycache__/
 *.pyc
 .venv/
 DC_Debates.pdf
+src/sample_update_tendencies.py
